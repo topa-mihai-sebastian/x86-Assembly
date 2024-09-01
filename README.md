@@ -1,94 +1,121 @@
 # x86-Assembly
 
-# TASK 1
+TASK1
 
-- Adresa șirului de caractere pe care îl verific este în `epb+8`.
-- `ecx` este contorul.
-- `esi` este pointerul la șirul de caractere.
-- Inițializez `eax` cu 0.
+Adresa sirului de caractere pe care il verific este in epb+8
 
-## Loop
+ecx este contorul
 
-loop: se bagă în al primul caracter mă asigur că nu este '\0' verific ce tip de paranteză este; dacă nu este nicio paranteză, trec la următorul caracter
+esi este pointer la sirul de caractere
 
-perl
+il fac pe eax 0
 
-dacă este '[':
-    se face jump la `open_paranthesis`
-    incrementăm contorul (`ecx`) și pointerul la șir (`esi`), adică trecem la următorul caracter
-    ne întoarcem în `loop`
+loop:
 
-dacă este '}':
-    se face jump la `close_paranthesis`
-    decrementăm contorul (`ecx`) și incrementăm pointerul la șir (`esi`)
-    ne întoarcem în `loop`
+se baga in al primul caractere
 
-când se ajunge la `'\0'`, se iese din `loop`
+ma asigur ca nu este '\\0'
 
-shell
+verific ce tip de paranteza este, iar daca nu este nicio paranteze trec la umratorul caracter
 
+sa spunem ca este '\[', se face jump la open\_paranthesis
 
-## End Loop
+incrementam contorul (ecx), si pointerul la sir (esi), adica trecem la umratorul caracter
 
-end_loop: verificăm dacă ecx este 0 dacă nu este 0, se returnează 1 altfel, facem xor eax, eax, deci se returnează 0
+ne intoarcem in loop
 
-markdown
+sa spunem ca este '}', se face jump la close\_paranthesis
 
+decrementam conotrul (ecx), si incrementam pointerul la sir (esi)
 
-# BONUS
+ne intoarcem in loop
 
-## `map`
+cand se ajunge la '\\0' se iese din loop
 
-- Parametrii:
-  - `rdi`: `destination_array`
-  - `rsi`: `source_array`
-  - `rdx`: `array_size`
-  - `rcx`: `function f`
+end\_loop:
 
-fac un auxiliar pentru destination_array în r10
+verificam daca ecx este 0
 
-r11 este contorul și îl fac 0
+daca nu este 0 se returneaza 1
 
-mapLoop: verific dacă contorul este mai mare decât mărimea efectivă dacă da, fac jmp la mapEnd
+altfel se face xor eax, eax, deci se retunreaza 0
 
-go
+BONUS
 
-bag `source_array[i]` în `rdi` (argument pentru `f`) -> `mov rdi, [rsi + r11*8]`
-apelez `f`
+map:
 
-rezultatul îl pun în `destination_array[i]`, adică `r10 + r11*8`
+; parametrii:
 
-incrementăm `i`, adică `r11`
-și continuăm să facem acest `mapLoop`
+; rdi: destination\_array
 
-shell
+; rsi: source\_array
 
+; rdx: array\_size
 
-## `mapEnd`
+; rcx: function f
 
-mapEnd: restaurez stiva
+fac un aux pentru destination\_array in r10
 
-markdown
+r11 este contorul si il fac 0
 
+mapLoop:
 
-## `reduce`
+verific daca contorul este mai mare decat marimea efectiva
 
-- Parametrii:
-  - `rdi`: `destination_array dst`
-  - `rsi`: `source_array src`
-  - `rdx`: `array_size n`
-  - `rcx`: `accumulator_initial_value acc_init`
-  - `r8`: `function pointer f`
+daca da fac jmp la mapEnd
 
-fac un auxiliar pentru destination_array în r10 fac un auxiliar pentru source_array în r11 fac un auxiliar pentru array_size în r12 fac un auxiliar pentru acc_init în rax r13 = i = 0
+bag source\_array\[i\] in rdi (argument pt f) -> mov rdi, \[rsi + r11\*8\]
 
-reduceLoop: verific dacă contorul este >= array_size dacă da, fac jmp la reduceEnd restaurez stiva
+apelez f
 
-go
+rezultatul il pun in destination\_array\[i\] adica r10 + r11\*8
 
-pun `rax` în `rdi` (pentru a avea în `rdi` acel `acc` din `f(acc, src[i])`)
-pun în `rsi` `src[i]` (`r11 + r13*8`)
-apelez `f`, `r8`
+incrementez i adica r11
 
-incrementăm `i`
-fac `jump` la `reduceLoop`
+si continui sa fac acest mapLoop
+
+mapEnd:
+
+restaurez stiva
+
+reduce:
+
+; parametrii:
+
+; rdi: destination\_array dst
+
+; rsi: source\_array src
+
+; rdx: array\_size n
+
+; rcx: accumulator\_initial\_value acc\_init
+
+; r8: function pointer f
+
+fac un aux pentru destination\_array in r10
+
+fac un aux pentru source\_array in r11
+
+fac un aux pentru array\_size in r12
+
+fac un aux pentru acc\_init in rax
+
+r13 = i = 0
+
+reduceLoop:
+
+verific daca contorul este >= array\_size
+
+daca da jmp reduceEnd
+
+restaurez stiva
+
+pun rax in rdi (pentru a avea in rdi acel acc din f(acc, src\[i\]))
+
+pun in rsi src\[i\](r11 + r13\*8)
+
+apelez f, r8
+
+incrementez i
+
+jump la reduceLoop

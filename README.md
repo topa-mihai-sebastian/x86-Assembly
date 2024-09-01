@@ -1,121 +1,90 @@
 # x86-Assembly
 
-TASK1
+# README
 
-Adresa sirului de caractere pe care il verific este in epb+8
+## TASK 1
 
-ecx este contorul
+This task involves verifying a string of characters using assembly language. Here's a detailed explanation of the process:
 
-esi este pointer la sirul de caractere
+### Overview
 
-il fac pe eax 0
+- **epb+8**: The address of the string to be checked.
+- **ecx**: Counter.
+- **esi**: Pointer to the string.
+- **eax**: Set to 0 initially.
 
-loop:
+### Steps
 
-se baga in al primul caractere
+1. **Initialization**:
+   - Set `eax` to 0.
 
-ma asigur ca nu este '\\0'
+2. **Loop**:
+   - Load the first character into `al`.
+   - Ensure that `al` is not `'\0'`.
+   - Check the type of parenthesis. If it is not a parenthesis, move to the next character.
+   - **If `[`:**
+     - Jump to `open_paranthesis`.
+     - Increment `ecx` and `esi`.
+     - Return to the loop.
+   - **If `}`:**
+     - Jump to `close_paranthesis`.
+     - Decrement `ecx` and increment `esi`.
+     - Return to the loop.
 
-verific ce tip de paranteza este, iar daca nu este nicio paranteze trec la umratorul caracter
+3. **End of Loop**:
+   - When `'\0'` is encountered, exit the loop.
+   - Check if `ecx` is 0:
+     - If not, return 1.
+     - Otherwise, set `eax` to 0 and return 0.
 
-sa spunem ca este '\[', se face jump la open\_paranthesis
+## BONUS
 
-incrementam contorul (ecx), si pointerul la sir (esi), adica trecem la umratorul caracter
+### Map Function
 
-ne intoarcem in loop
+- **Parameters**:
+  - `rdi`: Destination array.
+  - `rsi`: Source array.
+  - `rdx`: Array size.
+  - `rcx`: Function `f`.
 
-sa spunem ca este '}', se face jump la close\_paranthesis
+1. **Initialization**:
+   - Use `r10` as auxiliary for the destination array.
+   - Set `r11` (counter) to 0.
 
-decrementam conotrul (ecx), si incrementam pointerul la sir (esi)
+2. **Loop**:
+   - Check if the counter is greater than the array size. If true, jump to `mapEnd`.
+   - Load `source_array[i]` into `rdi` (argument for `f`) using `mov rdi, [rsi + r11*8]`.
+   - Call function `f`.
+   - Store the result in `destination_array[i]`, which is `r10 + r11*8`.
+   - Increment the counter `r11`.
+   - Continue the loop.
 
-ne intoarcem in loop
+3. **End**:
+   - Restore the stack.
 
-cand se ajunge la '\\0' se iese din loop
+### Reduce Function
 
-end\_loop:
+- **Parameters**:
+  - `rdi`: Destination array `dst`.
+  - `rsi`: Source array `src`.
+  - `rdx`: Array size `n`.
+  - `rcx`: Initial accumulator value `acc_init`.
+  - `r8`: Function pointer `f`.
 
-verificam daca ecx este 0
+1. **Initialization**:
+   - Use `r10` as auxiliary for the destination array.
+   - Use `r11` as auxiliary for the source array.
+   - Use `r12` as auxiliary for the array size.
+   - Use `rax` as auxiliary for the initial accumulator value.
+   - Set `r13` (counter) to 0.
 
-daca nu este 0 se returneaza 1
+2. **Loop**:
+   - Check if the counter is greater than or equal to the array size. If true, jump to `reduceEnd`.
+   - Load `rax` into `rdi` (to use `acc` in `f(acc, src[i])`).
+   - Load `src[i]` into `rsi` using `mov rsi, [r11 + r13*8]`.
+   - Call function `f` using `r8`.
+   - Increment the counter `r13`.
+   - Continue the loop.
 
-altfel se face xor eax, eax, deci se retunreaza 0
-
-BONUS
-
-map:
-
-; parametrii:
-
-; rdi: destination\_array
-
-; rsi: source\_array
-
-; rdx: array\_size
-
-; rcx: function f
-
-fac un aux pentru destination\_array in r10
-
-r11 este contorul si il fac 0
-
-mapLoop:
-
-verific daca contorul este mai mare decat marimea efectiva
-
-daca da fac jmp la mapEnd
-
-bag source\_array\[i\] in rdi (argument pt f) -> mov rdi, \[rsi + r11\*8\]
-
-apelez f
-
-rezultatul il pun in destination\_array\[i\] adica r10 + r11\*8
-
-incrementez i adica r11
-
-si continui sa fac acest mapLoop
-
-mapEnd:
-
-restaurez stiva
-
-reduce:
-
-; parametrii:
-
-; rdi: destination\_array dst
-
-; rsi: source\_array src
-
-; rdx: array\_size n
-
-; rcx: accumulator\_initial\_value acc\_init
-
-; r8: function pointer f
-
-fac un aux pentru destination\_array in r10
-
-fac un aux pentru source\_array in r11
-
-fac un aux pentru array\_size in r12
-
-fac un aux pentru acc\_init in rax
-
-r13 = i = 0
-
-reduceLoop:
-
-verific daca contorul este >= array\_size
-
-daca da jmp reduceEnd
-
-restaurez stiva
-
-pun rax in rdi (pentru a avea in rdi acel acc din f(acc, src\[i\]))
-
-pun in rsi src\[i\](r11 + r13\*8)
-
-apelez f, r8
-
-incrementez i
-
-jump la reduceLoop
+3. **End**:
+   - Restore the stack.
